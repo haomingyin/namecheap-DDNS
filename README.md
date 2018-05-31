@@ -4,7 +4,7 @@ A Bash script to update DNS record on [Namecheap](https://www.namecheap.com/).
 ## Preparation
 
 ### Set Up A Record
-Before you run the script, please make sure that you have set up your Namecheap DDNS `A record`. Instruction can be found [here](https://www.namecheap.com/support/knowledgebase/article.aspx/36/11/how-do-i-start-using-dynamic-dns).
+Before you run the script, please make sure that you have set up your Namecheap DDNS `A record`. Instruction can be found [here](https://www.namecheap.com/support/knowledgebase/article.aspx/36/11/how-do-i-start-using-dynamic-dns).
 
 ### How to get DDNS password
 Also make sure you have the DDNS password with you. If you haven't, please follow the steps below.
@@ -15,7 +15,7 @@ First, login to your Namecheap panel, then go to `Domain List` >> click `Manage`
 
 ### Run With Prompt
 1. Clone the repository to you local machine
-2. Change directory into the cloned repository
+2. Change directory into the cloned repository
 3. Run updateDNS.sh script
     ```bash 
     $ ./updateDNS.sh
