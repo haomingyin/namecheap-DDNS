@@ -8,7 +8,7 @@ function prompt_warn() {
 }
 
 function prompt_error() {
-    echo -e "\033[0;31m[ERROR]\033[0m $1"
+    echo -e "\033[0;31m[ERROR]\033[0m $1" >&2
 }
 
 function prompt_input() {
