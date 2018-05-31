@@ -49,7 +49,15 @@ function hasIP() {
 }
 
 function processResponse() {
-    echo $response
+    errCount=$(xmllint --xpath '//interface-response/ErrCount/text()' - <<< $response)
+    if [ "$errCount" == "0" ]; then
+        IP=$(xmllint --xpath '//interface-response/IP/text()' - <<< $response)
+        prompt_info "DNS record has been updated with IP '$IP'"
+    else
+        errMsg=$(xmllint --xpath '//interface-response/errors/Err1/text()' - <<< $response)
+        prompt_error "$errMsg"
+        exit 1
+    fi
 }
 
 function main() {
@@ -60,10 +68,9 @@ function main() {
     if hasIP; then
         hostUrl="${hostUrl}&ip=${IP}"
     fi
-    echo $hostUrl
 
     # send request via curl
-    response=$(curl -s $hostUrl)
+    response="$(curl -s $hostUrl)"
     processResponse
 }
 
