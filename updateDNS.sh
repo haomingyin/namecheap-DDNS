@@ -29,15 +29,15 @@ function getDomainName() {
 
 function getPassword() {
     if [ -z $PASSWORD ]; then
-        prompt_input "Please enter the PASSWORD for the DNS record"
+        prompt_input "Please enter the PASSWORD for the DDNS record"
         read var_pwd
         export PASSWORD=$(echo $var_pwd | tr '[:upper:]' '[:lower:]')
     fi
     prompt_info "Password has been set"
 }
 
-# if an IP has been given, then return 0 (indicating no error)
-# if no IP has been given, then public IP will be use, return 1 (indicating error/false)
+# If an IP has been given, then return 0 (indicating no error)
+# If no IP has been given, then public IP will be use, return 1 (indicating error/false)
 function hasIP() {
     if [ -z $IP ]; then
         prompt_info "Local public IP will be used"
@@ -48,11 +48,25 @@ function hasIP() {
     fi
 }
 
+# Checks if existed remote DNS record is the same with the IP address to be updated
+# If they are identical, then returns 0 (indicating no error)
+function isRemoteSame() {
+    remoteIp="$(dig +short $HOST.$DOMAIN_NAME @resolver1.opendns.com)"
+    localIp=$IP && [[ -z $IP ]] && localIp="$(dig +short myip.opendns.com @resolver1.opendns.com)"
+    if [ "$remoteIp" == "$localIp" ]; then
+        echo same
+        return 0
+    else
+        echo different
+        return 1
+    fi
+}
+
 function processResponse() {
     errCount=$(xmllint --xpath '//interface-response/ErrCount/text()' - <<< $response)
     if [ "$errCount" == "0" ]; then
         IP=$(xmllint --xpath '//interface-response/IP/text()' - <<< $response)
-        prompt_info "DNS record has been updated with IP '$IP'"
+        prompt_info "DDNS '$HOST' record has been updated against IP '$IP'"
     else
         errMsg=$(xmllint --xpath '//interface-response/errors/Err1/text()' - <<< $response)
         prompt_error "$errMsg"
@@ -63,6 +77,12 @@ function processResponse() {
 function main() {
     getHost
     getDomainName
+    if [ -z $VAR_FORCE ] && isRemoteSame; then
+        prompt_warn "Remote DDNS record is identical to the IP to be set to. Process exits gracefully."
+        prompt_info "To force updating the record, please set '-f' or '--force' argument."
+        exit 0
+    fi
+
     getPassword
     hostUrl="https://dynamicdns.park-your-domain.com/update?host=${HOST}&domain=${DOMAIN_NAME}&password=${PASSWORD}"
     if hasIP; then
@@ -74,4 +94,16 @@ function main() {
     processResponse
 }
 
+for arg in "$@"
+do  
+    case $arg in 
+        -f|--force)
+        VAR_FORCE=true
+        ;;
+        *)
+        prompt_error "Unknown argument type $arg"
+        exit 1
+        ;;
+    esac
+done
 main

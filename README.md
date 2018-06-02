@@ -13,6 +13,15 @@ First, login to your Namecheap panel, then go to `Domain List` >> click `Manage`
 
 ## Get Started
 
+### Things You Should Know
+Your record will not hit the Namecheap API if the given IP is identical to the remote DDNS record. However, if you still want to force push the already existed record for testing purpose, you could pass `-f` or `--force` argument.
+
+```bash
+$ ./updateDNS.sh --force
+```
+
+By doing this, the script will send a request even if the DDNS record needs not to be updated. It is not recommended to use in production mode.
+
 ### Run With Prompt
 1. Clone the repository to you local machine
 2. Change directory into the cloned repository
