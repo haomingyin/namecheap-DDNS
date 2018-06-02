@@ -54,10 +54,8 @@ function isRemoteSame() {
     remoteIp="$(dig +short $HOST.$DOMAIN_NAME @resolver1.opendns.com)"
     localIp=$IP && [[ -z $IP ]] && localIp="$(dig +short myip.opendns.com @resolver1.opendns.com)"
     if [ "$remoteIp" == "$localIp" ]; then
-        echo same
         return 0
     else
-        echo different
         return 1
     fi
 }
@@ -94,6 +92,7 @@ function main() {
     processResponse
 }
 
+# Read arguments
 for arg in "$@"
 do  
     case $arg in 
@@ -106,4 +105,5 @@ do
         ;;
     esac
 done
+
 main
