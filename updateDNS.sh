@@ -30,7 +30,8 @@ function getDomainName() {
 function getPassword() {
     if [ -z $PASSWORD ]; then
         prompt_input "Please enter the PASSWORD for the DDNS record"
-        read var_pwd
+        read -s var_pwd
+        echo ""
         export PASSWORD=$(echo $var_pwd | tr '[:upper:]' '[:lower:]')
     fi
     prompt_info "Password has been set"
